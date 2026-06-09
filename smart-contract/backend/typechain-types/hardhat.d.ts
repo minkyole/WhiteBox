@@ -46,6 +46,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.VRFConsumerBaseV2Plus__factory>;
     getContractFactory(
+      name: "VRFCoordinatorV2Interface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VRFCoordinatorV2Interface__factory>;
+    getContractFactory(
+      name: "VRFConsumerBaseV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VRFConsumerBaseV2__factory>;
+    getContractFactory(
       name: "TransparentGacha",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TransparentGacha__factory>;
@@ -91,6 +99,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.VRFConsumerBaseV2Plus>;
     getContractAt(
+      name: "VRFCoordinatorV2Interface",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VRFCoordinatorV2Interface>;
+    getContractAt(
+      name: "VRFConsumerBaseV2",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VRFConsumerBaseV2>;
+    getContractAt(
       name: "TransparentGacha",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -129,6 +147,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.VRFConsumerBaseV2Plus>;
     deployContract(
+      name: "VRFCoordinatorV2Interface",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.VRFCoordinatorV2Interface>;
+    deployContract(
+      name: "VRFConsumerBaseV2",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.VRFConsumerBaseV2>;
+    deployContract(
       name: "TransparentGacha",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.TransparentGacha>;
@@ -173,6 +199,16 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.VRFConsumerBaseV2Plus>;
+    deployContract(
+      name: "VRFCoordinatorV2Interface",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.VRFCoordinatorV2Interface>;
+    deployContract(
+      name: "VRFConsumerBaseV2",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.VRFConsumerBaseV2>;
     deployContract(
       name: "TransparentGacha",
       args: any[],

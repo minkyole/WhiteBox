@@ -27,9 +27,13 @@ export interface TransparentGachaInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "acceptOwnership"
+      | "beginnerPullCount"
+      | "midPullCount"
       | "owner"
       | "rawFulfillRandomWords"
-      | "requestToUser"
+      | "requestToAmount"
+      | "requestToGachaType"
+      | "requestToSender"
       | "rollGacha"
       | "s_keyHash"
       | "s_subscriptionId"
@@ -41,8 +45,8 @@ export interface TransparentGachaInterface extends Interface {
   getEvent(
     nameOrSignatureOrTopic:
       | "CoordinatorSet"
-      | "GachaRequested"
-      | "GachaResult"
+      | "GachaResultBatch"
+      | "GachaRolled"
       | "OwnershipTransferRequested"
       | "OwnershipTransferred"
   ): EventFragment;
@@ -51,16 +55,35 @@ export interface TransparentGachaInterface extends Interface {
     functionFragment: "acceptOwnership",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "beginnerPullCount",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "midPullCount",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "rawFulfillRandomWords",
     values: [BigNumberish, BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "requestToUser",
+    functionFragment: "requestToAmount",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "rollGacha", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "requestToGachaType",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requestToSender",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rollGacha",
+    values: [AddressLike, BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "s_keyHash", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "s_subscriptionId",
@@ -83,13 +106,29 @@ export interface TransparentGachaInterface extends Interface {
     functionFragment: "acceptOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "beginnerPullCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "midPullCount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "rawFulfillRandomWords",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "requestToUser",
+    functionFragment: "requestToAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requestToGachaType",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requestToSender",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "rollGacha", data: BytesLike): Result;
@@ -124,12 +163,24 @@ export namespace CoordinatorSetEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace GachaRequestedEvent {
-  export type InputTuple = [requestId: BigNumberish, userId: string];
-  export type OutputTuple = [requestId: bigint, userId: string];
+export namespace GachaResultBatchEvent {
+  export type InputTuple = [
+    user: AddressLike,
+    requestId: BigNumberish,
+    gachaType: BigNumberish,
+    weaponGrades: BigNumberish[]
+  ];
+  export type OutputTuple = [
+    user: string,
+    requestId: bigint,
+    gachaType: bigint,
+    weaponGrades: bigint[]
+  ];
   export interface OutputObject {
+    user: string;
     requestId: bigint;
-    userId: string;
+    gachaType: bigint;
+    weaponGrades: bigint[];
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -137,24 +188,24 @@ export namespace GachaRequestedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace GachaResultEvent {
+export namespace GachaRolledEvent {
   export type InputTuple = [
+    user: AddressLike,
     requestId: BigNumberish,
-    userId: string,
-    randomNumber: BigNumberish,
-    rarity: BigNumberish
+    gachaType: BigNumberish,
+    amount: BigNumberish
   ];
   export type OutputTuple = [
+    user: string,
     requestId: bigint,
-    userId: string,
-    randomNumber: bigint,
-    rarity: bigint
+    gachaType: bigint,
+    amount: bigint
   ];
   export interface OutputObject {
+    user: string;
     requestId: bigint;
-    userId: string;
-    randomNumber: bigint;
-    rarity: bigint;
+    gachaType: bigint;
+    amount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -233,6 +284,10 @@ export interface TransparentGacha extends BaseContract {
 
   acceptOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
+  beginnerPullCount: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
+  midPullCount: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   rawFulfillRandomWords: TypedContractMethod<
@@ -241,9 +296,21 @@ export interface TransparentGacha extends BaseContract {
     "nonpayable"
   >;
 
-  requestToUser: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+  requestToAmount: TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
 
-  rollGacha: TypedContractMethod<[userId: string], [bigint], "nonpayable">;
+  requestToGachaType: TypedContractMethod<
+    [arg0: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
+  requestToSender: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+
+  rollGacha: TypedContractMethod<
+    [user: AddressLike, gachaType: BigNumberish, amount: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
   s_keyHash: TypedContractMethod<[], [string], "view">;
 
@@ -271,6 +338,12 @@ export interface TransparentGacha extends BaseContract {
     nameOrSignature: "acceptOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "beginnerPullCount"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "midPullCount"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -281,11 +354,21 @@ export interface TransparentGacha extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "requestToUser"
+    nameOrSignature: "requestToAmount"
+  ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "requestToGachaType"
+  ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "requestToSender"
   ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
   getFunction(
     nameOrSignature: "rollGacha"
-  ): TypedContractMethod<[userId: string], [bigint], "nonpayable">;
+  ): TypedContractMethod<
+    [user: AddressLike, gachaType: BigNumberish, amount: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "s_keyHash"
   ): TypedContractMethod<[], [string], "view">;
@@ -310,18 +393,18 @@ export interface TransparentGacha extends BaseContract {
     CoordinatorSetEvent.OutputObject
   >;
   getEvent(
-    key: "GachaRequested"
+    key: "GachaResultBatch"
   ): TypedContractEvent<
-    GachaRequestedEvent.InputTuple,
-    GachaRequestedEvent.OutputTuple,
-    GachaRequestedEvent.OutputObject
+    GachaResultBatchEvent.InputTuple,
+    GachaResultBatchEvent.OutputTuple,
+    GachaResultBatchEvent.OutputObject
   >;
   getEvent(
-    key: "GachaResult"
+    key: "GachaRolled"
   ): TypedContractEvent<
-    GachaResultEvent.InputTuple,
-    GachaResultEvent.OutputTuple,
-    GachaResultEvent.OutputObject
+    GachaRolledEvent.InputTuple,
+    GachaRolledEvent.OutputTuple,
+    GachaRolledEvent.OutputObject
   >;
   getEvent(
     key: "OwnershipTransferRequested"
@@ -350,26 +433,26 @@ export interface TransparentGacha extends BaseContract {
       CoordinatorSetEvent.OutputObject
     >;
 
-    "GachaRequested(uint256,string)": TypedContractEvent<
-      GachaRequestedEvent.InputTuple,
-      GachaRequestedEvent.OutputTuple,
-      GachaRequestedEvent.OutputObject
+    "GachaResultBatch(address,uint256,uint8,uint8[])": TypedContractEvent<
+      GachaResultBatchEvent.InputTuple,
+      GachaResultBatchEvent.OutputTuple,
+      GachaResultBatchEvent.OutputObject
     >;
-    GachaRequested: TypedContractEvent<
-      GachaRequestedEvent.InputTuple,
-      GachaRequestedEvent.OutputTuple,
-      GachaRequestedEvent.OutputObject
+    GachaResultBatch: TypedContractEvent<
+      GachaResultBatchEvent.InputTuple,
+      GachaResultBatchEvent.OutputTuple,
+      GachaResultBatchEvent.OutputObject
     >;
 
-    "GachaResult(uint256,string,uint256,uint8)": TypedContractEvent<
-      GachaResultEvent.InputTuple,
-      GachaResultEvent.OutputTuple,
-      GachaResultEvent.OutputObject
+    "GachaRolled(address,uint256,uint8,uint32)": TypedContractEvent<
+      GachaRolledEvent.InputTuple,
+      GachaRolledEvent.OutputTuple,
+      GachaRolledEvent.OutputObject
     >;
-    GachaResult: TypedContractEvent<
-      GachaResultEvent.InputTuple,
-      GachaResultEvent.OutputTuple,
-      GachaResultEvent.OutputObject
+    GachaRolled: TypedContractEvent<
+      GachaRolledEvent.InputTuple,
+      GachaRolledEvent.OutputTuple,
+      GachaRolledEvent.OutputObject
     >;
 
     "OwnershipTransferRequested(address,address)": TypedContractEvent<

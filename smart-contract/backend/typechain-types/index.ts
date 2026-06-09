@@ -22,5 +22,9 @@ export type { VRFV2PlusClient } from "./@chainlink/contracts/src/v0.8/vrf/dev/li
 export { VRFV2PlusClient__factory } from "./factories/@chainlink/contracts/src/v0.8/vrf/dev/libraries/VRFV2PlusClient__factory";
 export type { VRFConsumerBaseV2Plus } from "./@chainlink/contracts/src/v0.8/vrf/dev/VRFConsumerBaseV2Plus";
 export { VRFConsumerBaseV2Plus__factory } from "./factories/@chainlink/contracts/src/v0.8/vrf/dev/VRFConsumerBaseV2Plus__factory";
+export type { VRFCoordinatorV2Interface } from "./@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface";
+export { VRFCoordinatorV2Interface__factory } from "./factories/@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface__factory";
+export type { VRFConsumerBaseV2 } from "./@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2";
+export { VRFConsumerBaseV2__factory } from "./factories/@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2__factory";
 export type { TransparentGacha } from "./contracts/TransparentGacha";
 export { TransparentGacha__factory } from "./factories/contracts/TransparentGacha__factory";

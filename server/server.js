@@ -10,29 +10,30 @@ app.use(express.json());
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 const masterWallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
-// 1. 이벤트 로그를 읽기 위해 ABI에 Event 내용 추가
+// 컨트랙트 ABI - rollGacha 함수와 이벤트들만 포함
 const contractABI = [
-    "function rollGacha(string memory userId) external returns (uint256)",
-    "event GachaRequested(uint256 indexed requestId, string userId)",
-    "event GachaResult(uint256 indexed requestId, string userId, uint256 randomNumber, uint8 rarity)"
+    "function rollGacha(address user, uint8 gachaType, uint32 amount) external",
+    "event GachaRolled(address indexed user, uint256 requestId, uint8 gachaType, uint32 amount)",
+    "event GachaResultBatch(address indexed user, uint256 requestId, uint8 gachaType, uint8[] weaponGrades)"
 ];
 const contract = new ethers.Contract(process.env.CONTRACT_ADDRESS, contractABI, masterWallet);
 
-// [가챠 요청 API] - 영수증과 함께 체인링크 요청ID(requestId)를 함께 반환합니다.
+// [가챠 요청 API] - 유니티에서 userAddress, gachaType, amount를 받습니다.
 app.post('/api/gacha', async (req, res) => {
     try {
-        const { userId } = req.body; 
-        console.log(`[서버] ${userId}의 가챠 요청 수신! 트랜잭션 발송 중...`);
+        const { userAddress, gachaType, amount } = req.body; 
+        console.log(`[서버] ${userAddress}의 ${amount}연뽑 요청 수신!`);
 
-        const tx = await contract.rollGacha(userId.toString());
-        const receipt = await tx.wait(); // 블록에 기록될 때까지 잠시 대기
+        // 🌟 컨트랙트 함수 호출 인자 3개로 변경
+        const tx = await contract.rollGacha(userAddress, gachaType, amount);
+        const receipt = await tx.wait(); 
         
-        // 트랜잭션 영수증 로그에서 체인링크가 발급한 requestId 추출
+        // GachaRolled 이벤트에서 requestId 추출
         let requestId = "";
         for (const log of receipt.logs) {
             try {
                 const parsedLog = contract.interface.parseLog(log);
-                if (parsedLog && parsedLog.name === 'GachaRequested') {
+                if (parsedLog && parsedLog.name === 'GachaRolled') {
                     requestId = parsedLog.args.requestId.toString();
                     break;
                 }
@@ -48,28 +49,32 @@ app.post('/api/gacha', async (req, res) => {
     }
 });
 
-// [최종본] 결과 확인 API - 배달 영수증 해시(fulfillTxHash) 추가 리턴
+// [결과 확인 API] - GachaResultBatch 이벤트 기반으로 수정
 app.get('/api/gacha-result', async (req, res) => {
     try {
         const { requestId } = req.query;
         if (!requestId) return res.status(400).json({ success: false, error: "requestId 필수" });
 
-        const filter = contract.filters.GachaResult(BigInt(requestId));
+        // 🌟 수정 1: 필터 조건 없이 빈 필터를 만듭니다.
+        const filter = contract.filters.GachaResultBatch();
         const currentBlock = await provider.getBlockNumber();
-        const events = await contract.queryFilter(filter, currentBlock - 9, currentBlock);
+        
+        // 최근 20블록 안에서 발생한 '모든' 가챠 결과 이벤트를 가져옵니다.
+        const events = await contract.queryFilter(filter, currentBlock - 9, currentBlock); 
 
-        if (events.length > 0) {
-            const rarity = Number(events[0].args.rarity); 
-            
-            // 🌟 [핵심 추가] 체인링크가 난수를 배달한 진짜 트랜잭션의 해시(영수증) 추출!
-            const fulfillTxHash = events[0].transactionHash; 
+        // 🌟 수정 2: 가져온 이벤트들 중에서 우리가 찾는 requestId와 일치하는 것만 찾아냅니다.
+        const targetEvent = events.find(e => e.args.requestId.toString() === requestId.toString());
 
-            console.log(`[서버] 온체인 결과 발견! RequestID: ${requestId} -> 등급: ${rarity}`);
+        if (targetEvent) {
+            // targetEvent에서 배열 형태의 weaponGrades 추출
+            const weaponGrades = targetEvent.args.weaponGrades.map(g => Number(g));
+            const fulfillTxHash = targetEvent.transactionHash; 
+
+            console.log(`[서버] 온체인 결과 발견! ID: ${requestId} -> 등급들: ${weaponGrades}`);
             
-            // 유니티로 등급과 배달 해시를 함께 던져줍니다.
             return res.json({ 
                 status: "success", 
-                rarity: rarity, 
+                weaponGrades: weaponGrades,
                 fulfillTxHash: fulfillTxHash 
             });
         } else {
