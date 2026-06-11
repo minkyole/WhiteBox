@@ -26,13 +26,12 @@ public class SkillManager : MonoBehaviour
     // 전체 스킬 목록을 관리하는 딕셔너리
     public Dictionary<int, SkillData> skillDatabase = new Dictionary<int, SkillData>();
 
-    // 🌟 추가: 인스펙터에서 끄고 켤 수 있는 테스트용 스위치
     [Header("Debug Settings")]
     public bool unlockAllForTest = true;
 
     [Header("Skill Summon Settings")]
-    public Transform playerTransform; // 🌟 소환 위치 기준이 될 플레이어
-    public GameObject[] skillPrefabs = new GameObject[10]; // 🌟 인스펙터에서 1~10단계 프리팹을 끌어다 넣을 칸
+    public Transform playerTransform;
+    public GameObject[] skillPrefabs = new GameObject[10];
     public Sprite[] skillIcons = new Sprite[10];
 
     void Awake()
@@ -49,14 +48,14 @@ public class SkillManager : MonoBehaviour
         }
         InitializeSkills();
 
-        // 🌟 추가: 테스트 모드가 켜져 있다면 시작하자마자 전부 해금
+        // 테스트 모드가 켜져 있다면 시작하자마자 전부 해금
         if (unlockAllForTest)
         {
             UnlockAllSkillsForDebug();
         }
     }
 
-    // 🌟 3. 매 프레임마다 쿨타임을 계산하고 스킬을 발사하는 로직
+    // 3. 매 프레임마다 쿨타임을 계산하고 스킬을 발사하는 로직
     void Update()
     {
         foreach (var kvp in skillDatabase)
@@ -71,7 +70,7 @@ public class SkillManager : MonoBehaviour
                     skill.currentCooldown -= Time.deltaTime;
                 }
 
-                // 2. 할당된 키보드 입력 감지 (입력 브로드캐스트 매니저가 있다면 그쪽으로 옮겨도 좋습니다)
+                // 2. 할당된 키보드 입력 감지
                 if (Input.GetKeyDown(skill.activeKey))
                 {
                     TryUseSkill(skill);
@@ -80,7 +79,7 @@ public class SkillManager : MonoBehaviour
         }
     }
 
-    // 🌟 추가: 전체 스킬 강제 해금 로직
+    // 전체 스킬 강제 해금 로직
     private void UnlockAllSkillsForDebug()
     {
         foreach (var kvp in skillDatabase)
@@ -98,7 +97,7 @@ public class SkillManager : MonoBehaviour
         skillDatabase.Clear();
 
         // 🌟 수정: 끝부분에 skillIcon = skillIcons[0] 등을 각각 추가해 줍니다.
-        skillDatabase.Add(1, new SkillData { grade = 1, skillName = "밭갈기", type = SkillType.Melee, prefab = skillPrefabs[0], skillIcon = skillIcons[0], damage = 10, maxCooldown = 2f, currentCooldown = 0f, activeKey = KeyCode.A });
+        skillDatabase.Add(1, new SkillData { grade = 1, skillName = "몽둥이치기", type = SkillType.Melee, prefab = skillPrefabs[0], skillIcon = skillIcons[0], damage = 10, maxCooldown = 2f, currentCooldown = 0f, activeKey = KeyCode.A });
         skillDatabase.Add(2, new SkillData { grade = 2, skillName = "광석캐기", type = SkillType.Melee, prefab = skillPrefabs[1], skillIcon = skillIcons[1], damage = 30, maxCooldown = 3f, currentCooldown = 0f, activeKey = KeyCode.S });
         skillDatabase.Add(3, new SkillData { grade = 3, skillName = "상단베기", type = SkillType.Melee, prefab = skillPrefabs[2], skillIcon = skillIcons[2], damage = 70, maxCooldown = 4f, currentCooldown = 0f, activeKey = KeyCode.D });
 
@@ -115,7 +114,7 @@ public class SkillManager : MonoBehaviour
 
 
 
-    // 🌟 입력 신호가 들어왔을 때 발사 가능 여부를 검증하는 함수
+    // 입력 신호가 들어왔을 때 발사 가능 여부를 검증하는 함수
     public void TryUseSkill(SkillData skill)
     {
         if (skill.currentCooldown <= 0)
@@ -125,7 +124,6 @@ public class SkillManager : MonoBehaviour
         }
         else
         {
-            // 쿨타임 중일 때 눌렀을 경우 (필요 시 사운드나 UI 흔들림 연출 추가 가능)
             Debug.Log($"{skill.skillName} 쿨타임 중! ({skill.currentCooldown:F1}초 남음)");
         }
     }
@@ -138,6 +136,13 @@ public class SkillManager : MonoBehaviour
             return;
         }
 
+        //플레이어의 애니메이터를 찾아서 공격 애니메이션 실행!
+        Animator anim = playerTransform.GetComponent<Animator>();
+        if (anim != null)
+        {
+            anim.SetTrigger("Attack");
+        }
+
         // 플레이어보다 약간 오른쪽(또는 앞쪽)에서 소환되도록 위치 조정
         Vector3 spawnPos = playerTransform.position + new Vector3(1f, 0f, 0f);
 
@@ -146,13 +151,10 @@ public class SkillManager : MonoBehaviour
 
         if (controller != null)
         {
-            // 임시로 무조건 오른쪽(Vector2.right)을 향해 쏘도록 설정했습니다.
-            // (나중에 플레이어가 바라보는 방향으로 바꿀 수 있습니다)
             controller.Init(skill.damage, skill.type, Vector2.right);
         }
     }
 
-    // 🌟 GachaManager에게 텍스트를 리턴하도록 string 반환형으로 변경
     public void UnlockOrUpgradeSkills(int[] grades)
     {
         int totalDamageAdded = 0;
@@ -180,7 +182,6 @@ public class SkillManager : MonoBehaviour
             }
         }
 
-        // 데미지 증가 적용
         GameManager.Instance.AddTapDamage(totalDamageAdded);
 
         if (SkillUIManager.Instance != null)

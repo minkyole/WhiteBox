@@ -17,7 +17,7 @@ public class ObjectPoolManager : MonoBehaviour
     [Header("오브젝트 풀 설정")]
     public List<Pool> pools;
 
-    // 실제 오브젝트들을 담아둘 큐(대기열) 딕셔너리
+    // 실제 오브젝트들을 담아둘 딕셔너리
     public Dictionary<string, Queue<GameObject>> poolDictionary;
 
     void Awake()
@@ -35,7 +35,7 @@ public class ObjectPoolManager : MonoBehaviour
 
             for (int i = 0; i < pool.size; i++)
             {
-                // 생성 후 ObjectPoolManager의 자식으로 묶어서 하이어라키를 깔끔하게 유지합니다.
+                // 생성 후 ObjectPoolManager의 자식으로 묶어서 하이어라키를 깔끔하게 유지한다.
                 GameObject obj = Instantiate(pool.prefab, transform);
                 obj.SetActive(false); // 일단 숨겨둠
                 objectPool.Enqueue(obj);
@@ -45,7 +45,7 @@ public class ObjectPoolManager : MonoBehaviour
         }
     }
 
-    // 🌟 필요할 때 오브젝트를 꺼내 쓰는 함수
+    // 필요할 때 오브젝트를 꺼내 쓰는 함수
     public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
     {
         if (!poolDictionary.ContainsKey(tag))
@@ -54,7 +54,7 @@ public class ObjectPoolManager : MonoBehaviour
             return null;
         }
 
-        // 1. 큐의 맨 앞에서 오브젝트를 하나 꺼냅니다.
+        // 1. 큐의 맨 앞에서 오브젝트를 하나 꺼낸다.
         GameObject obj = poolDictionary[tag].Dequeue();
 
         // 2. 위치와 회전값을 설정하고 활성화합니다.
@@ -62,8 +62,7 @@ public class ObjectPoolManager : MonoBehaviour
         obj.transform.position = position;
         obj.transform.rotation = rotation;
 
-        // 3. 다 쓴 오브젝트는 다시 큐의 맨 뒤로 줄을 세웁니다. 
-        // (이렇게 하면 한도 개수를 넘어가도 가장 오래된 것을 재사용하므로 에러가 나지 않습니다!)
+        // 3. 다 쓴 오브젝트는 다시 큐의 맨 뒤로 줄을 세운다. 
         poolDictionary[tag].Enqueue(obj);
 
         return obj;

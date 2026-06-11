@@ -43,5 +43,14 @@
       1
     ],
     "txHash": "0x9be786cb1b100133d6032cbdcf7d12a809f614d1e02ac87f2983d54689bbc6bd"
+  },
+  {
+    "userAddress": "0xdfcbf76e83ff1966474fbba9bed3ad8c9e2f8c34",
+    "requestId": "48069024279129480846773938519637865044959487760162301796449111967639822595487",
+    "gachaType": 0,
+    "weaponGrades": [
+      1
+    ],
+    "txHash": "0x2c52a34dd05d78b5068cc0c137b1cea34c32c616db235dd3de8a3bde1514eb21"
   }
 ]

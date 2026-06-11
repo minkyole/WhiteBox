@@ -10,8 +10,8 @@ public class Portal : MonoBehaviour
     public int stageLevel = 1;
 
     [Header("포탈 애니메이션")]
-    public Sprite[] portalFrames;   // 잘라낸 8개의 포탈 이미지
-    public float frameRate = 0.1f;  // 프레임 넘어가는 속도
+    public Sprite[] portalFrames;
+    public float frameRate = 0.1f;
 
     private SpriteRenderer spriteRenderer;
 
@@ -19,14 +19,12 @@ public class Portal : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // 애니메이션 프레임이 등록되어 있다면 코루틴 시작
         if (portalFrames != null && portalFrames.Length > 0)
         {
             StartCoroutine(PlayPortalAnimation());
         }
     }
 
-    // 🌟 무한 반복되는 애니메이션 코루틴
     private IEnumerator PlayPortalAnimation()
     {
         int currentFrame = 0;
@@ -39,7 +37,6 @@ public class Portal : MonoBehaviour
         }
     }
 
-    // 기존의 이동 로직 (변경 없음)
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))

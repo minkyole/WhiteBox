@@ -44,18 +44,18 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow)) movement.y = 1f;
         else if (Input.GetKey(KeyCode.DownArrow)) movement.y = -1f;
 
-        // 🌟 1. 애니메이션 방향 기억하기
+        // 1. 애니메이션 방향 기억하기
         if (movement.x != 0 || movement.y != 0)
         {
             lastMoveDir = movement;
         }
 
-        // 🌟 2. 애니메이터에 파라미터 값 전달하기
+        // 2. 애니메이터에 파라미터 값 전달하기
         anim.SetFloat("DirX", lastMoveDir.x);
         anim.SetFloat("DirY", lastMoveDir.y);
         anim.SetFloat("Speed", movement.magnitude); // 이동 중이면 0보다 커서 Walk로 전환됨
 
-        // 🌟 3. 왼쪽으로 이동할 때 이미지 좌우 반전시키기
+        // 3. 왼쪽으로 이동할 때 이미지 좌우 반전시키기
         if (movement.x < 0)
         {
             sr.flipX = true;
@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
 
     void Attack()
     {
-        // 🌟 공격 애니메이션 실행
+        // 공격 애니메이션 실행
         anim.SetTrigger("Attack");
 
         Collider2D hit = Physics2D.OverlapCircle(transform.position, attackRange, monsterLayer);

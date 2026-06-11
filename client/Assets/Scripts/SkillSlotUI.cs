@@ -18,7 +18,7 @@ public class SkillSlotUI : MonoBehaviour
     {
         mySkillData = data; // 데이터 저장
 
-        // 🌟 추가됨: 데이터에서 아이콘을 가져와서 UI 이미지 교체
+        // 데이터에서 아이콘을 가져와서 UI 이미지 교체
         if (skillIcon != null && data.skillIcon != null)
         {
             skillIcon.sprite = data.skillIcon;
@@ -43,7 +43,6 @@ public class SkillSlotUI : MonoBehaviour
         }
     }
 
-    // 🌟 매 프레임마다 UI 게이지 업데이트
     void Update()
     {
         if (mySkillData != null && mySkillData.isUnlocked && cooldownOverlay != null)

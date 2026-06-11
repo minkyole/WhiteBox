@@ -12,16 +12,13 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        // 1. 만약 Instance가 비어있다면, 나 자신을 Instance로 지정
         if (Instance == null)
         {
             Instance = this;
-            // 2. 씬이 넘어가도 이 오브젝트를 파괴하지 마라! (가장 핵심)
             DontDestroyOnLoad(gameObject);
         }
         else
         {
-            // 3. 로비로 다시 돌아왔을 때, 새로운 GameManager가 생기는 것을 막기 위해 자살
             Destroy(gameObject);
         }
     }

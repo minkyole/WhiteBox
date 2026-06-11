@@ -8,7 +8,7 @@ public class Monster : MonoBehaviour
     public int rewardGold = 500;
 
     [Header("UI References")]
-    public TextMeshPro hpText; // 몬스터 머리 위 3D Text 연결용 변수
+    public TextMeshPro hpText;
 
     void Start()
     {
@@ -29,7 +29,6 @@ public class Monster : MonoBehaviour
         // 1. 풀에서 데미지 텍스트를 꺼내서 몬스터 위치보다 살짝 위쪽에 소환
         GameObject textObj = ObjectPoolManager.Instance.SpawnFromPool("DamageText", transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
 
-        // 2. 숫자를 입력해 줌 (약간 좌우로 랜덤하게 퍼지게 하면 타격감이 더 좋습니다!)
         if (textObj != null)
         {
             // 위치 살짝 분산 (여러 개 뜰 때 겹치지 않게)
@@ -51,8 +50,7 @@ public class Monster : MonoBehaviour
         GameManager.Instance.AddGold(rewardGold);
         Spawn(); // 죽으면 다시 부활
     }
-
-    // 몬스터 체력 텍스트를 갱신해 주는 함수
+    
     private void UpdateHpUI()
     {
         if (hpText != null)

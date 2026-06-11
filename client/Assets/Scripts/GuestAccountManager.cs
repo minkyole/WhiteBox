@@ -8,7 +8,7 @@ public static class GuestAccountManager
 
     public static string GetOrGenerateAddress()
     {
-        // 1. 예전에 접속해서 저장된 주소가 있다면 그대로 가져옵니다.
+        // 1. 예전에 접속해서 저장된 주소가 있다면 그대로 가져온다.
         if (PlayerPrefs.HasKey(PREFS_KEY))
         {
             string savedAddress = PlayerPrefs.GetString(PREFS_KEY);
@@ -16,10 +16,10 @@ public static class GuestAccountManager
             return savedAddress;
         }
 
-        // 2. 처음 접속한 유저라면 새로 랜덤 주소를 발급합니다.
+        // 2. 처음 접속한 유저라면 새로 랜덤 주소를 발급한다.
         string newAddress = GenerateRandomEthAddress();
 
-        // 3. 발급된 주소를 기기에 영구 저장합니다.
+        // 3. 발급된 주소를 기기에 영구 저장한다.
         PlayerPrefs.SetString(PREFS_KEY, newAddress);
         PlayerPrefs.Save();
 
@@ -33,7 +33,7 @@ public static class GuestAccountManager
         StringBuilder sb = new StringBuilder("0x");
         char[] hexChars = "0123456789abcdef".ToCharArray();
 
-        // 40번 반복해서 랜덤한 문자를 뽑아 붙입니다.
+        // 40번 반복해서 랜덤한 문자를 뽑아 붙인다.
         for (int i = 0; i < 40; i++)
         {
             sb.Append(hexChars[Random.Range(0, hexChars.Length)]);

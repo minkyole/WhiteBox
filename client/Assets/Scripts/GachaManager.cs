@@ -157,7 +157,6 @@ public class GachaManager : MonoBehaviour
                     fulfillTxHash = result.fulfillTxHash;
                     if (fulfillButton != null) fulfillButton.SetActive(true);
 
-                    // 🌟 수정: 스펙을 올리지 않고, UI 컨트롤러에게 당첨된 등급 배열을 넘겨줍니다.
                     GachaUIController.Instance.OnTransactionComplete(result.weaponGrades);
 
                     isDone = true;

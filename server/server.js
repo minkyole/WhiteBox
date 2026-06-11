@@ -12,7 +12,7 @@ app.use(express.json());
 const historyFilePath = path.join(__dirname, 'history.json');
 let historyDB = [];
 
-// 서버가 켜질 때 기존 파일이 있으면 읽어오고, 없으면 새로 만듭니다.
+// 서버가 켜질 때 기존 파일이 있으면 읽어오고, 없으면 새로 만든다.
 if (fs.existsSync(historyFilePath)) {
     const rawData = fs.readFileSync(historyFilePath, 'utf8');
     historyDB = JSON.parse(rawData);
@@ -35,17 +35,15 @@ const contractABI = [
 ];
 const contract = new ethers.Contract(process.env.CONTRACT_ADDRESS, contractABI, masterWallet);
 
-// [가챠 요청 API] - 유니티에서 userAddress, gachaType, amount를 받습니다.
+// [가챠 요청 API] - 유니티에서 userAddress, gachaType, amount를 받는다.
 app.post('/api/gacha', async (req, res) => {
     try {
         const { userAddress, gachaType, amount } = req.body; 
         console.log(`[서버] ${userAddress}의 ${amount}연뽑 요청 수신!`);
 
-        // 🌟 컨트랙트 함수 호출 인자 3개로 변경
         const tx = await contract.rollGacha(userAddress, gachaType, amount);
         const receipt = await tx.wait(); 
         
-        // GachaRolled 이벤트에서 requestId 추출
         let requestId = "";
         for (const log of receipt.logs) {
             try {
@@ -66,17 +64,15 @@ app.post('/api/gacha', async (req, res) => {
     }
 });
 
-// [결과 확인 API] - GachaResultBatch 이벤트 기반으로 수정
 app.get('/api/gacha-result', async (req, res) => {
     try {
         const { requestId } = req.query;
         if (!requestId) return res.status(400).json({ success: false, error: "requestId 필수" });
 
-        // 🌟 수정 1: 필터 조건 없이 빈 필터를 만듭니다.
         const filter = contract.filters.GachaResultBatch();
         const currentBlock = await provider.getBlockNumber();
         
-        // 최근 20블록 안에서 발생한 '모든' 가챠 결과 이벤트를 가져옵니다.
+        // 최근 10블록 안에서 발생한 '모든' 가챠 결과 이벤트를 가져온다.
         const events = await contract.queryFilter(filter, currentBlock - 9, currentBlock); 
 
         const targetEvent = events.find(e => e.args.requestId.toString() === requestId.toString());
@@ -85,11 +81,11 @@ app.get('/api/gacha-result', async (req, res) => {
             const weaponGrades = targetEvent.args.weaponGrades.map(g => Number(g));
             const fulfillTxHash = targetEvent.transactionHash; 
             
-            // 🌟 이벤트에서 정보 추출
+            // 이벤트에서 정보 추출
             const userAddress = targetEvent.args.user; 
             const gachaType = Number(targetEvent.args.gachaType);
 
-            // 🌟 중복 저장이 아니면 DB 배열에 넣고 파일로 저장!
+            // 중복 저장이 아니면 DB 배열에 넣고 파일로 저장!
             if (!historyDB.find(h => h.requestId === requestId.toString())) {
                 historyDB.push({
                     userAddress: userAddress.toLowerCase(),
@@ -99,7 +95,7 @@ app.get('/api/gacha-result', async (req, res) => {
                     txHash: fulfillTxHash
                 });
                 
-                // 파일에 예쁘게(들여쓰기 2칸) 덮어쓰기하여 영구 보존
+                // 파일에 덮어쓰기하여 영구 보존
                 fs.writeFileSync(historyFilePath, JSON.stringify(historyDB, null, 2));
                 console.log(`[서버 DB] ${userAddress}의 기록이 history.json에 영구 저장되었습니다.`);
             }
@@ -131,7 +127,7 @@ app.get('/api/gacha-counts', async (req, res) => {
 
         res.json({
             success: true,
-            // ethers v6 기준 BigInt로 반환되므로 Number나 String으로 변환해서 보냅니다.
+            // ethers v6 기준 BigInt로 반환되므로 Number나 String으로 변환해서 보낸다.
             beginnerCount: Number(beginner),
             midCount: Number(mid)
         });
@@ -151,7 +147,7 @@ app.get('/api/history', async (req, res) => {
         // 파일에서 읽어온 historyDB 배열에서 내 주소와 일치하는 것만 필터링
         const myHistory = historyDB.filter(h => h.userAddress === address.toLowerCase());
 
-        // 유니티로 전송!
+        // 유니티로 전송
         res.json({ success: true, history: myHistory });
 
     } catch (error) {

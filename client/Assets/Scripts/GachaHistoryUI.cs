@@ -18,16 +18,13 @@ public class GachaHistoryUI : MonoBehaviour
 
         if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
 
-        // 1. 기존에 생성된 UI 찌꺼기 청소
         foreach (Transform child in contentContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // 2. 임시 로딩 텍스트 등을 띄울 수도 있습니다.
         Debug.Log("서버에 기록을 요청합니다...");
 
-        // 3. 매니저를 통해 서버 통신 시작!
         gachaManager.FetchGachaHistory(OnHistoryReceived);
     }
 
@@ -45,10 +42,10 @@ public class GachaHistoryUI : MonoBehaviour
         {
             GachaHistoryItem item = historyData[i];
 
-            // 🌟 프리팹 생성
+            // 프리팹 생성
             GameObject slot = Instantiate(historySlotPrefab, contentContainer);
 
-            // 🌟 프리팹 내부의 Text 찾아서 내용 채우기
+            // 프리팹 내부의 Text 찾아서 내용 채우기
             TextMeshProUGUI logText = slot.transform.Find("LogText").GetComponent<TextMeshProUGUI>();
 
             string typeName = item.gachaType == 0 ? "초보자" : "중급";
@@ -57,7 +54,7 @@ public class GachaHistoryUI : MonoBehaviour
             // 간단하게 텍스트로 요약 (예: [초보자] 10연뽑 완료! (결과: 1, 2, 1...))
             logText.text = $"[{typeName}] {pullCount}연뽑 완료!\n결과: {string.Join(", ", item.weaponGrades)}";
 
-            // 🌟 프리팹 내부의 '이더스캔 링크 버튼' 연결
+            // 프리팹 내부의 '이더스캔 링크 버튼' 연결
             Button linkButton = slot.transform.Find("EtherscanButton").GetComponent<Button>();
 
             // 버튼을 누르면 해당 txHash를 가진 이더스캔 페이지를 엽니다.
@@ -72,7 +69,7 @@ public class GachaHistoryUI : MonoBehaviour
     {
         gameObject.SetActive(false); // 기록 창 끄기
 
-        // 🌟 다시 메인 메뉴 켜기
+        // 다시 메인 메뉴 켜기
         if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
     }
 }

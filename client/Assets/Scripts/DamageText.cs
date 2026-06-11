@@ -17,7 +17,7 @@ public class DamageText : MonoBehaviour
         textMesh = GetComponent<TextMeshPro>();
     }
 
-    // 🌟 풀에서 꺼내져서 활성화될 때마다 초기화됩니다.
+    // 풀에서 꺼내져서 활성화될 때마다 초기화.
     void OnEnable()
     {
         if (textMesh != null)
@@ -46,7 +46,7 @@ public class DamageText : MonoBehaviour
         }
     }
 
-    // 🌟 외부(몬스터)에서 데미지 숫자를 입력해 주는 함수
+    //외부(몬스터)에서 데미지 숫자를 입력해 주는 함수
     public void Setup(int damage)
     {
         textMesh.text = damage.ToString();

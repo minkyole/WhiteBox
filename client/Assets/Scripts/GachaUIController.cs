@@ -14,9 +14,9 @@ public class GachaUIController : MonoBehaviour
     public GameObject resultPanel;
 
     [Header("시각적 결과창 연결")]
-    public Transform slotContainer;     // 🌟 그리드 레이아웃이 있는 컨테이너
-    public GameObject resultSlotPrefab; // 🌟 방금 만든 ResultSlot 프리팹
-    public Button closeButton;          // 🌟 창을 닫을 확인 버튼
+    public Transform slotContainer;
+    public GameObject resultSlotPrefab;
+    public Button closeButton;
 
     [Header("스프라이트 프레임")]
     public Sprite[] eggFrames;
@@ -31,7 +31,6 @@ public class GachaUIController : MonoBehaviour
         gachaUIPanel.SetActive(false);
         eggButton.onClick.AddListener(OnClickEgg);
 
-        // 🌟 닫기 버튼에 창 닫는 함수 연결
         closeButton.onClick.AddListener(CloseGachaUI);
     }
 
@@ -104,13 +103,13 @@ public class GachaUIController : MonoBehaviour
         eggImage.gameObject.SetActive(false);
         resultPanel.SetActive(true);
 
-        // 🌟 1. 기존에 생성된 슬롯이 있다면 싹 지워주기 (안 그러면 뽑을 때마다 무한 증식함)
+        // 기존에 생성된 슬롯이 있다면 싹 지워주기 (안 그러면 뽑을 때마다 무한 증식함)
         foreach (Transform child in slotContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // 🌟 2. 10연뽑 배열을 돌면서 슬롯 프리팹 생성 및 이미지 입히기
+        //10연뽑 배열을 돌면서 슬롯 프리팹 생성 및 이미지 입히기
         foreach (int grade in pendingGrades)
         {
             if (SkillManager.Instance.skillDatabase.TryGetValue(grade, out SkillData skillData))
@@ -127,11 +126,11 @@ public class GachaUIController : MonoBehaviour
             }
         }
 
-        // 🌟 3. 스펙업을 적용하고 총합 요약 텍스트만 상단에 띄우기
+        // 스펙업을 적용하고 총합 요약 텍스트만 상단에 띄우기
         SkillManager.Instance.UnlockOrUpgradeSkills(pendingGrades);
     }
 
-    // 🌟 확인 버튼을 누르면 완전히 깔끔하게 꺼지는 로직
+    // 확인 버튼을 누르면 완전히 깔끔하게 꺼지는 로직
     public void CloseGachaUI()
     {
         gachaUIPanel.SetActive(false);
