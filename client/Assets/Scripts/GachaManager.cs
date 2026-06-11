@@ -52,6 +52,7 @@ public class GachaManager : MonoBehaviour
             if (fulfillButton != null) fulfillButton.SetActive(false);
 
             if (statusText != null) statusText.text = $"블록체인 {amount}연뽑 요청 중...";
+            GachaUIController.Instance.StartGachaAnimation();
             StartCoroutine(SendGachaRequest(amount));
         }
         else
@@ -115,23 +116,14 @@ public class GachaManager : MonoBehaviour
                     fulfillTxHash = result.fulfillTxHash;
                     if (fulfillButton != null) fulfillButton.SetActive(true);
 
-                    // 🌟 수정됨: SkillManager를 호출하여 처리
-                    ApplyBatchResult(result.weaponGrades);
+                    // 🌟 수정: 스펙을 올리지 않고, UI 컨트롤러에게 당첨된 등급 배열을 넘겨줍니다.
+                    GachaUIController.Instance.OnTransactionComplete(result.weaponGrades);
 
                     isDone = true;
                     isProcessing = false;
                 }
             }
         }
-    }
-
-    // 🌟 대폭 간소화된 결과 처리 로직
-    private void ApplyBatchResult(int[] grades)
-    {
-        // SkillManager에게 배열을 넘기고, UI에 출력할 텍스트를 받아옵니다.
-        string finalResultText = SkillManager.Instance.UnlockOrUpgradeSkills(grades);
-
-        if (statusText != null) statusText.text = finalResultText;
     }
 
     public void OpenRequestLink()

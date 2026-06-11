@@ -13,13 +13,25 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        if (SkillManager.Instance != null)
+        {
+            SkillManager.Instance.playerTransform = this.transform;
+        }
     }
 
     void Update()
     {
-        // WASD 이동 입력 받기
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
+        // 1. 매 프레임마다 이동 방향을 일단 0으로 초기화합니다.
+        movement.x = 0f;
+        movement.y = 0f;
+
+        // 2. 오직 화살표 키(Arrow)가 눌렸을 때만 movement 값을 변경합니다.
+        if (Input.GetKey(KeyCode.RightArrow)) movement.x = 1f;
+        else if (Input.GetKey(KeyCode.LeftArrow)) movement.x = -1f;
+
+        if (Input.GetKey(KeyCode.UpArrow)) movement.y = 1f;
+        else if (Input.GetKey(KeyCode.DownArrow)) movement.y = -1f;
     }
 
     void FixedUpdate()
