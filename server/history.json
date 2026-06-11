@@ -52,5 +52,32 @@
       1
     ],
     "txHash": "0x2c52a34dd05d78b5068cc0c137b1cea34c32c616db235dd3de8a3bde1514eb21"
+  },
+  {
+    "userAddress": "0x0d9e2b5e23bd023458547167b182fbd7bce61c3f",
+    "requestId": "15870427851871763641222396811879219027308773526648573065268964247700122361211",
+    "gachaType": 0,
+    "weaponGrades": [
+      2,
+      1,
+      1,
+      1,
+      3,
+      1,
+      1,
+      1,
+      1,
+      2
+    ],
+    "txHash": "0x36f9744538015c1f31ca346775743680243ed41a2fb6f4293b2717a3ef66b52b"
+  },
+  {
+    "userAddress": "0xbd88860c8084749899db8f33c551adef32da2278",
+    "requestId": "42133795996266667288578211454094191950313294923179776405727403130242367974840",
+    "gachaType": 0,
+    "weaponGrades": [
+      3
+    ],
+    "txHash": "0xff0609047118fabaa055c5a23ea2d9a5160a2fb0ecd2e6b2558bfee609410938"
   }
 ]
