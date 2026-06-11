@@ -30,6 +30,9 @@ public class GachaManager : MonoBehaviour
     private string requestTxHash = "";
     private string fulfillTxHash = "";
 
+    public int currentStage = 1;
+
+
     void Start()
     {
         if (requestButton != null) requestButton.SetActive(false);

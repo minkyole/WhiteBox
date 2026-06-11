@@ -23,8 +23,22 @@ public class Monster : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        currentHp -= damage;
+        currentHp = Mathf.Max(0, currentHp - damage);
         UpdateHpUI(); // 맞을 때마다 체력 UI 갱신!
+
+        // 1. 풀에서 데미지 텍스트를 꺼내서 몬스터 위치보다 살짝 위쪽에 소환
+        GameObject textObj = ObjectPoolManager.Instance.SpawnFromPool("DamageText", transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+
+        // 2. 숫자를 입력해 줌 (약간 좌우로 랜덤하게 퍼지게 하면 타격감이 더 좋습니다!)
+        if (textObj != null)
+        {
+            // 위치 살짝 분산 (여러 개 뜰 때 겹치지 않게)
+            float randomX = Random.Range(-0.3f, 0.3f);
+            textObj.transform.position += new Vector3(randomX, 0, 0);
+
+            // 데미지 숫자 적용
+            textObj.GetComponent<DamageText>().Setup(damage);
+        }
 
         if (currentHp <= 0)
         {

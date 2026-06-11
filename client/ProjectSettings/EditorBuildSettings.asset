@@ -9,8 +9,35 @@ EditorBuildSettings:
     path: Assets/Scenes/LobbyScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Scenes/DungeonScene.unity
+    path: Assets/Scenes/Stage1.unity
     guid: 4c128d1bc7ec09241a73be520fe50231
+  - enabled: 1
+    path: Assets/Scenes/Stage2.unity
+    guid: 622643c6e898d4942b41ed287343748e
+  - enabled: 1
+    path: Assets/Scenes/Stage3.unity
+    guid: d60278a462615e943aa6474daa371d7b
+  - enabled: 1
+    path: Assets/Scenes/Stage4.unity
+    guid: 54f95ec4eb772bf439d04b16310342e3
+  - enabled: 1
+    path: Assets/Scenes/Stage5.unity
+    guid: cb72a170f39146b458e00ddd214e5dd4
+  - enabled: 1
+    path: Assets/Scenes/Stage6.unity
+    guid: 1aa9877face77d14e996b329ea8fb95e
+  - enabled: 1
+    path: Assets/Scenes/Stage7.unity
+    guid: cd1db4a2c369a9e428e11a4e91d2f55b
+  - enabled: 1
+    path: Assets/Scenes/Stage8.unity
+    guid: 1857d7c07c66ce54985a7dcfbfd6c1cf
+  - enabled: 1
+    path: Assets/Scenes/Stage9.unity
+    guid: 8c852b4c08079144cade2712c93eb23d
+  - enabled: 1
+    path: Assets/Scenes/Stage10.unity
+    guid: 941c8510e8b2bed429f3c33cace88808
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
