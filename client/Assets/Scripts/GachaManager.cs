@@ -163,17 +163,15 @@ public class GachaManager : MonoBehaviour
                     fulfillTxHash = result.fulfillTxHash;
                     if (fulfillButton != null) fulfillButton.SetActive(true);
 
-                    // 5. UI 컨트롤러에게 뽑힌 무기 등급 배열을 넘겨주어 화면에 띄우게 함 (알 깨기, 무기 등장 등)
+                    // UI 컨트롤러에게 뽑힌 무기 등급 배열을 넘겨주어 화면에 띄우게 함 (알 깨기, 무기 등장 등)
                     GachaUIController.Instance.OnTransactionComplete(result.weaponGrades);
 
-                    // 6. 결과를 받았으니 while 반복문을 탈출하기 위해 true로 변경
                     isDone = true;
-                    isProcessing = false; // 이제 다음 가챠를 돌릴 수 있게 잠금 해제
+                    isProcessing = false;
 
-                    // 7. 내 가챠 누적 횟수(초보자/중급 소환 횟수) 갱신
+                    // 내 가챠 누적 횟수(초보자/중급 소환 횟수) 갱신
                     UpdateGachaCounts();
                 }
-                // 만약 status가 "pending"이라면, if문에 걸리지 않고 다시 while문 처음으로 돌아가 3초를 기다립니다.
             }
         }
     }

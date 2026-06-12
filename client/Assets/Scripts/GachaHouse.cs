@@ -8,9 +8,6 @@ public class GachaHouse : MonoBehaviour
     public GameObject step2_TierMenu;   // 3가지 단계(유형) 선택 화면
     public GachaManager gachaManager; // 인스펙터에서 GachaManager 오브젝트를 드래그해서 연결
 
-    public AudioSource audioSource;
-    public AudioClip eggCrackSound;
-
     private bool isTenPull = false;     // 현재 10회 소환을 선택했는지 기억하는 변수
 
     public static bool isUIOpen = false;
