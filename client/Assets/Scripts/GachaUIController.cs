@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections;
 using TMPro;
-using System.Collections;
+using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.UI;
 
 public class GachaUIController : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class GachaUIController : MonoBehaviour
 
     private bool isReadyToOpen = false;
     private int[] pendingGrades;
+
+    public AudioSource audioSource;
+    public AudioClip eggCrackSound;
 
     void Awake()
     {
@@ -93,6 +97,10 @@ public class GachaUIController : MonoBehaviour
 
     private IEnumerator ExplodeAnimation()
     {
+        if (audioSource != null && eggCrackSound != null)
+        {
+            audioSource.PlayOneShot(eggCrackSound);
+        }
         eggImage.sprite = eggFrames[6];
         yield return new WaitForSeconds(0.15f);
 

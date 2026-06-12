@@ -138,33 +138,42 @@ public class GachaManager : MonoBehaviour
         }
     }
 
+    // 블록체인에서 가챠 결과가 나올 때까지 주기적으로 서버에 확인(Polling)하는 코루틴
     private IEnumerator PollGachaResult(string requestId)
     {
         bool isDone = false;
+
         while (!isDone)
         {
             yield return new WaitForSeconds(3.0f);
 
+            //서버의 API 주소로 뽑기결과가 나왔는지 GET 요청을 보냅니다.
             UnityWebRequest request = UnityWebRequest.Get($"{baseUrl}/gacha-result?requestId={requestId}");
-            yield return request.SendWebRequest();
+            yield return request.SendWebRequest(); // 서버 응답이 올 때까지 대기
 
             if (request.result == UnityWebRequest.Result.Success)
             {
+                // 서버가 보낸 JSON 문자열 데이터를 C# 객체(GachaResultData)로 변환
                 GachaResultData result = JsonUtility.FromJson<GachaResultData>(request.downloadHandler.text);
 
+                // 서버가 "블록체인에서 결과 확인 완료라고 응답했다면
                 if (result.status == "success")
                 {
+                    // 이더스캔에서 결과를 증명할 수 있는 트랜잭션 해시를 저장하고, 확인 버튼(링크)을 켬
                     fulfillTxHash = result.fulfillTxHash;
                     if (fulfillButton != null) fulfillButton.SetActive(true);
 
+                    // 5. UI 컨트롤러에게 뽑힌 무기 등급 배열을 넘겨주어 화면에 띄우게 함 (알 깨기, 무기 등장 등)
                     GachaUIController.Instance.OnTransactionComplete(result.weaponGrades);
 
+                    // 6. 결과를 받았으니 while 반복문을 탈출하기 위해 true로 변경
                     isDone = true;
-                    isProcessing = false;
+                    isProcessing = false; // 이제 다음 가챠를 돌릴 수 있게 잠금 해제
 
+                    // 7. 내 가챠 누적 횟수(초보자/중급 소환 횟수) 갱신
                     UpdateGachaCounts();
-
                 }
+                // 만약 status가 "pending"이라면, if문에 걸리지 않고 다시 while문 처음으로 돌아가 3초를 기다립니다.
             }
         }
     }

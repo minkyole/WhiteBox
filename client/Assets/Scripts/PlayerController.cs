@@ -14,6 +14,9 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer sr;
     private Vector2 lastMoveDir = new Vector2(0, -1); // 캐릭터가 멈췄을 때 바라볼 기본 방향 (아래)
 
+    public AudioSource audioSource; // 추가한 Audio Source를 연결할 변수
+    public AudioClip attackSound;   // 챙! 하는 공격 소리 파일을 넣을 변수
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -85,7 +88,11 @@ public class PlayerController : MonoBehaviour
     {
         // 공격 애니메이션 실행
         anim.SetTrigger("Attack");
-
+        // 공격 사운드 재생
+        if (audioSource != null && attackSound != null)
+        {
+            audioSource.PlayOneShot(attackSound);
+        }
         Collider2D hit = Physics2D.OverlapCircle(transform.position, attackRange, monsterLayer);
         if (hit != null)
         {
@@ -94,6 +101,7 @@ public class PlayerController : MonoBehaviour
             {
                 target.TakeDamage(GameManager.Instance.tapDamage);
             }
+            
         }
     }
 }

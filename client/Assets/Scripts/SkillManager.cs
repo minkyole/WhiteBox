@@ -34,6 +34,9 @@ public class SkillManager : MonoBehaviour
     public GameObject[] skillPrefabs = new GameObject[10];
     public Sprite[] skillIcons = new Sprite[10];
 
+    public AudioSource audioSource;
+    public AudioClip skillUseSound;
+
     void Awake()
     {
         if (Instance == null)
@@ -141,6 +144,11 @@ public class SkillManager : MonoBehaviour
         if (anim != null)
         {
             anim.SetTrigger("Attack");
+        }
+
+        if (audioSource != null && skillUseSound != null)
+        {
+            audioSource.PlayOneShot(skillUseSound);
         }
 
         // 플레이어보다 약간 오른쪽(또는 앞쪽)에서 소환되도록 위치 조정
